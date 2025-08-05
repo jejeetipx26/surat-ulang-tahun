@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Untuk Kekasihku, Jian</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Google untuk estetik -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #004030;
+            font-family: 'IM Fell English SC', serif;
+            color: #e8e1c7;
+            overflow-x: hidden;
+        }
+        
+        .envelope-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            transition: all 0.5s ease;
+        }
+        
+        .envelope {
+            width: 300px;
+            height: 200px;
+            background-color: #006048;
+            border-radius: 5px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            border: 2px solid #e8e1c7;
+        }
+        
+        .envelope:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #008060;
+            transform-origin: top;
+            transform: rotateX(0deg);
+            transition: all 0.5s ease;
+            z-index: 3;
+            border-top: 100px solid #008060;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+        }
+        
+        .envelope:hover:before {
+            transform: rotateX(180deg);
+        }
+        
+        .envelope:hover {
+            transform: translateY(-20px);
+        }
+        
+        .envelope:after {
+            content: '✉️';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            z-index: 2;
+        }
+    
+        .letter {
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            background-color: #f5f5dc;
+            top: 5%;
+            left: 5%;
+            border-radius: 3px;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: none;
+            padding: 20px;
+            font-family: 'IM Fell English SC', serif;
+            font-size: 1.2rem;
+            overflow-y: auto;
+            color: #004030;
+            border: 1px solid #004030;
+        }
+
+        .letter.outside {
+            display: block !important;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 80vw;
+            max-width: 600px;
+            height: auto;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            background-color: #f5f5dc;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #004030;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            animation: fadeInLetter 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInLetter {
+            from {
+            opacity: 0;
+            transform: translate(-50%, -40%);
+        }
+            to {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        } }
+        
+        .cipher-text {
+            font-family: monospace;
+            background-color: #e8e1c7;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            color: #004030;
+            border: 1px dashed #004030;
+        }
+        
+        .password-box, .confirmation-box {
+            display: none;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #006048;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid #e8e1c7;
+        }
+        
+        .letter-content {
+            display: none;
+        }
+        
+        .letter-page {
+            display: none;
+            padding: 20px;
+            background-color: #f5f5dc;
+            border: 2px solid #004030;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            color: #004030;
+        }
+        
+        .letter-container h1,
+        .letter-container h2,
+        .letter-container h3 {
+            color: #004030 !important; 
+        }
+
+        .letter-page.active {
+            display: block;
+        }
+        
+        .page-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .page-nav h6 {
+            color: #004030 !important;
+        }
+        
+        h1, h2, h3{
+            font-family: 'Cinzel', serif;
+            color: #e8e1c7;
+        }
+        
+        .btn-dino {
+            background-color: #004030;
+            color: #e8e1c7;
+            border: 1px solid #e8e1c7;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-dino:hover {
+            background-color: #002418;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 64, 48, 0.5);
+            color: #e8e1c7;
+        }
+        
+        .dino-icon {
+            color: #004030;
+            font-size: 1.5rem;
+            margin: 0 5px;
+        }
+        
+        .fossil-decoration {
+            position: absolute;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        .fossil-1 {
+            top: 10%;
+            left: 5%;
+            font-size: 8rem;
+            transform: rotate(-15deg);
+        }
+        
+        .fossil-2 {
+            bottom: 10%;
+            right: 5%;
+            font-size: 8rem;
+            transform: rotate(15deg);
+        }
+        
+        .letter-container, .gallery-container {
+            max-width: 800px;
+            margin: 50px auto;
+            display: none;
+            background-color: #f5f5dc;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #004030;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gallery-container {
+            margin-top: 30px;
+        }
+        
+        .gallery-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #004030;
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .photo-frame {
+            border: 5px solid #004030;
+            border-radius: 5px;
+            padding: 5px;
+            background-color: #e8e1c7;
+            transition: all 0.3s ease;
+        }
+        
+        .photo-frame:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border: 1px solid #004030;
+            display: block;
+        }
+        
+        .dino-border {
+            border-top: 3px solid #004030;
+            border-bottom: 3px solid #004030;
+            padding: 10px 0;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .dino-border:before {
+            content: "🦖";
+            position: absolute;
+            left: 0;
+            top: -15px;
+        }
+        
+        .dino-border:after {
+            content: "🦕";
+            position: absolute;
+            right: 0;
+            top: -15px;
+        }
+        
+        input.form-control {
+            background-color: #e8e1c7;
+            border: 1px solid #004030;
+            color: #004030;
+        }
+        
+        input.form-control:focus {
+            background-color: #f5f5dc;
+            border-color: #004030;
+            box-shadow: 0 0 0 0.25rem rgba(0, 64, 48, 0.25);
+        }
+        
+        html {
+    scroll-behavior: smooth;
+}
+    </style>
+</head>
+<body>
+    <!-- Dekorasi fosil -->
+    <div class="fossil-decoration fossil-1">🦴</div>
+    <div class="fossil-decoration fossil-2">🦴</div>
+
+    <!-- Amplop Pembuka -->
+    <div class="envelope-container" id="envelopeContainer">
+        <div class="envelope" id="envelope">
+            <div class="letter" id="letter">
+                <div class="cipher-text" id="cipherText">
+                    4C 6F 76 65 6C 79 20 4A 65 6A 65 2C 0A 0A 54 68 69 73 20 69 73 20 61 20 73 65 63 72 65 74 20 6D 65 73 73 61 67 65 20 6A 75 73 74 20 66 6F 72 20 79 6F 75 2E 20 49 66 20 79 6F 75 27 72 65 20 72 65 61 64 69 6E 67 20 74 68 69 73 2C 20 79 6F 75 27 76 65 20 66 6F 75 6E 64 20 74 68 65 20 6D 79 73 74 65 72 79 20 6F 66 20 6D 79 20 68 65 61 72 74 2E 0A 0A 44 6F 20 79 6F 75 20 77 61 6E 74 20 74 6F 20 6B 6E 6F 77 20 77 68 61 74 20 69 74 20 73 61 79 73 3F
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kotak Konfirmasi -->
+    <div class="container confirmation-box" id="confirmationBox">
+        <div class="text-center">
+            <h3>Bingung ya sama isinya? <span class="dino-icon">🦖</span></h3>
+            <h3>Penasaran ga?</h3>
+            <div class="mt-4">
+                <button class="btn-dino me-3" id="btnYes">Ya, penasaran!</button>
+                <button class="btn-dino" id="btnNo">Tidak, cuek aja</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kotak Password -->
+    <div class="container password-box" id="passwordBox">
+        <div class="text-center">
+            <h2><span class="dino-icon">🔒</span> Masukkan Password</h2>
+            <p class="mb-4">Hint: pujian untuk jeje dalam 1 kata</p>
+            <div class="mb-3">
+                <input type="password" class="form-control" id="passwordInput" placeholder="Password...">
+                <div class="invalid-feedback">Password salah! Coba lagi ya.</div>
+            </div>
+            <button class="btn-dino" id="btnSubmitPassword">Buka Surat</button>
+        </div>
+    </div>
+
+    <!-- Konten Surat Asli -->
+    <div class="container letter-container" id="letterContainer">
+        <div class="text-center mb-5">
+            <h2 color>Untuk kekasihku, Muhamad Alif Jian <span class="dino-icon">🦕</span></h2>
+            <div class="dino-border"></div>
+        </div>
+        
+        <div class="letter-page active" id="page1">
+            <h4> Perayaan hari baik</h4>
+            <p>Dear Jian,</p>
+            <p> Hai sayang, 6 Aguastus 2005 adalah hari pertama engkau datang kedunia ini. Tak terasa 20 tahun sudah berlalu. Hari ini 6 Agustus 2025 genap berkepala 2 engkau hari ini. Hari ini anak kecil yang dulunya hobi bermain sedang bertambah usia.</p>
+            <p> 20 tahun lamanya sudah Jian menghirup udara di bumi ini. Selamat ulang tahun ya sayang ku ucapkan kepadamu kekasihku.</p>
+        </div>
+        
+        <div class="letter-page" id="page2">
+            <p>Harap demi harap dilangitkan kembali dan semoga demi semoga diucapkan dengan lantang oleh semua penduduk bumi yang menyayangimu.</p>
+        </div>
+        
+        <div class="letter-page" id="page3">
+            <p>Terlahir sebagai manusia yang ceritanya dirangkai dengan hebat oleh sang penulis semesta, jeje bersyukur dengan dihadirkannya jian di waktu yang tak tertuga dan tepat bagi sang penulis semesta.</p>
+            <p> Jian sangat tertulis indah dihalaman paling menyenangkan dalam hidup jeje. senang mengenal manusia penuh kejutan seperti sepertimu, yang dibuat tertawa dengan tingkahmu, yang dibuat kesal dengan seribu keusilanmu.</p>
+        </div>
+        
+        <div class="letter-page" id="page4">
+        <p>Apakah jian mendengarnya sayang? Kata semoga jeje ucapkan lebih keras agar dunia juga dapat mendengarnya, karna jeje mau semua penduduk bumi ini tahu bahwa manusia yang paling baik yang pernah kutemui ini sedang bertambah usia.</p>
+        </div>
+        
+        <div class="letter-page" id="page5">
+            <p> Alam bersenandung ria dipimpin oleh matahari yang menyorotkan cahaya yang paling indah dengan bentuk bulat sempurna menyambut yang sedang bertambah. Lihatlah bahkan alam pun ikut serta merayakan perayaan hari baikmu, dan tentu saja perayaan tak akan berhenti sampai di sini. karena bagi jeje, setiap hari jian selalu dan akan jeje rayakan.</p>
+        </div>
+        
+        <div class="letter-page" id="page6">
+            <p> Satu permohonan yang jeje genggam, dipanjatkan paling akhir dalam hati. beribu semoga bertarung, jeje menitipkan "kita" tentang semoga kita bisa terus mengudara dan terbang setingginya menciptakan benih-benih kebahagiaan dalam rangkulan kasih yang selalu mengusahakan "saling".</p>
+        </div>
+        
+        <div class="letter-page" id="page7">
+            <p>Bertumbuhlah sebagaimana mestinya, perjalanan di bumi masih sangat panjang. tolong temui jeje di pijakan bumi mana pun ya? Promise? supaya jian tidak pernah mendekap lelah sendirian, sebab jian juga mempunyai jeje untuk selalu merangkul semua bentuk cerita yang telah jian lalui.</p>
+            <p> Terimakasih sayang telah memilih terlahir sebagai manusia yang mencintai dan menyayangi jeje, terimakasih telah menjadi sosok yang hebat dan keren untuk jeje, terimakasih telah mengisi segala rumpang yang ada di diri jeje sayang.</p>
+        </div>
+        
+        <div class="letter-page" id="page8">
+            <p> Sekali lagi sayang,</p>
+            <p> Selamat bertambah usia ya sayang</p>
+            <p> Ucapkan terimakasih pada diri jian sendiri, mengapresiasi diri jian atas jiwa yang telah memilih bertahan dan akan terus bertahan. Segala letih sudah jian lalui, beribu cerita yang terdapat tangis dan tawa di dalamnya sudah jian rasakan, berbagai makian sudah sering jian dengar, namun jian tetap utuh meski rasanya hanya tinggal separuh.</p>
+            <p> sangat hebat dan keren sayang, jian untuk sampai di titik ini, 20 tahun. mari, rayakanlah dirimu dengan baik ya sayang. semoga penduduk bumi dan alam semesta senantiasa merayakanmu dengan penuh sukacita dan kedamaian.</p>
+            <p>Dengan cinta yang sangat dalam,</p>
+            <p>[Jeanne Septiani l. toruan] <span class="dino-icon">💌</span></p>
+            <div class="text-center mt-4">
+                <button class="btn-dino" id="btnShowGallery">galeri kita sayang</button>
+            </div>
+        </div>
+        
+        <div class="page-nav">
+            <button class="btn-dino" id="btnPrev">Sebelumnya</button>
+            <h6><span id="pageIndicator">Halaman 1 dari 8</span></h6>
+            <button class="btn-dino" id="btnNext">Selanjutnya</button>
+        </div>
+    </div>
+
+    <!-- Galeri Foto -->
+    <div class="container gallery-container" id="galleryContainer">
+        <h2 class="gallery-title">Galeri Kenangan Kita (Jian&jeje) <span class="dino-icon">📸</span></h2>
+        <div class="photo-grid" id="photoGrid">
+            <!-- Foto akan di-generate oleh JavaScript -->
+        </div>
+        <div class="text-center mt-4">
+            <button class="btn-dino" id="btnBackToLetter">Kembali ke Surat</button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS dan Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const envelope = document.getElementById('envelope');
+            const envelopeContainer = document.getElementById('envelopeContainer');
+            const letter = document.getElementById('letter');
+            const confirmationBox = document.getElementById('confirmationBox');
+            const passwordBox = document.getElementById('passwordBox');
+            const letterContainer = document.getElementById('letterContainer');
+            const galleryContainer = document.getElementById('galleryContainer');
+            const photoGrid = document.getElementById('photoGrid');
+            const btnYes = document.getElementById('btnYes');
+            const btnNo = document.getElementById('btnNo');
+            const btnSubmitPassword = document.getElementById('btnSubmitPassword');
+            const passwordInput = document.getElementById('passwordInput');
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            const btnShowGallery = document.getElementById('btnShowGallery');
+            const btnBackToLetter = document.getElementById('btnBackToLetter');
+            const pageIndicator = document.getElementById('pageIndicator');
+            
+            let currentPage = 1;
+            const totalPages = 8;
+            
+            // Generate foto untuk galeri
+            function generateGallery() {
+    photoGrid.innerHTML = '';
+    const totalFoto = 30;
+    const base = 'img/IMG-20250806-WA';
+    const exts = ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG'];
+
+    for (let i = 1; i <= totalFoto; i++) {
+        const nomor = i.toString().padStart(4, '0'); // 0001..0030
+
+        // Bungkus foto
+        const frame = document.createElement('div');
+        frame.className = 'photo-frame';
+
+        // Elemen img
+        const img = document.createElement('img');
+        img.className = 'photo';
+        img.loading = 'lazy'; // lazy-load
+        img.alt = `Kenangan ${i}`;
+
+        // Coba beberapa ekstensi sampai ada yang berhasil
+        const candidates = exts.map(ext => `${base}${nomor}${ext}`);
+        let idx = 0;
+
+        const tryLoad = () => {
+            if (idx >= candidates.length) {
+                // Semua gagal → hapus frame supaya tidak ada kotak kosong
+                frame.remove();
+                return;
+            }
+            img.src = candidates[idx];
+            img.onerror = () => {
+                idx++;
+                tryLoad();
+            };
+            // kalau onload terpanggil, biarkan saja (berhasil)
+        };
+
+        tryLoad();
+
+        frame.appendChild(img);
+        photoGrid.appendChild(frame);
+    }
+}
+            
+            // Animasi amplop dibuka
+            envelope.addEventListener('click', function() {
+            // Tambahkan class 'outside' agar kertas keluar dari amplop
+            letter.classList.add('outside');
+
+            // Setelah 10 detik, sembunyikan kertas & lanjut ke konfirmasi
+            setTimeout(() => {
+            letter.style.display = 'none';
+            envelopeContainer.style.opacity = '0';
+            setTimeout(() => {
+            envelopeContainer.style.display = 'none';
+            confirmationBox.style.display = 'block';
+            }, 500);
+            }, 10000); // tampil 10 detik
+            });
+        
+            // Tombol Ya diklik
+            btnYes.addEventListener('click', function() {
+                confirmationBox.style.display = 'none';
+                passwordBox.style.display = 'block';
+            });
+            
+            // Tombol Tidak diklik
+            btnNo.addEventListener('click', function() {
+                confirmationBox.style.display = 'none';
+                alert('Yah, padahal isinya spesial lho untukmu 😢');
+            });
+            
+            // Submit password
+            btnSubmitPassword.addEventListener('click', function() {
+                if (passwordInput.value.toLowerCase() === 'jejecantik') {
+                    passwordBox.style.display = 'none';
+                    letterContainer.style.display = 'block';
+                    
+                    // Animasi scroll ke atas
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    passwordInput.classList.add('is-invalid');
+                    setTimeout(() => {
+                        passwordInput.classList.remove('is-invalid');
+                    }, 2000);
+                }
+            });
+            
+            // Navigasi halaman surat
+            function updatePage() {
+                // Sembunyikan semua halaman
+                document.querySelectorAll('.letter-page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Tampilkan halaman aktif
+                document.getElementById('page' + currentPage).classList.add('active');
+                
+                // Update indikator halaman
+                pageIndicator.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+                
+                // Atur visibilitas tombol navigasi
+                btnPrev.style.visibility = currentPage === 1 ? 'hidden' : 'visible';
+                btnNext.style.visibility = currentPage === totalPages ? 'hidden' : 'visible';
+            }
+            
+            btnPrev.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePage();
+                }
+            });
+            
+            btnNext.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePage();
+                }
+            });
+            
+            // Tombol untuk menampilkan galeri
+            btnShowGallery.addEventListener('click', function() {
+    generateGallery();
+    letterContainer.style.display = 'none';
+    galleryContainer.style.display = 'block';
+
+    // Scroll halus ke galeri (bagian atas galeri)
+    galleryContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+            
+            // Tombol untuk kembali ke surat
+            btnBackToLetter.addEventListener('click', function() {
+                galleryContainer.style.display = 'none';
+                letterContainer.style.display = 'block';
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Inisialisasi halaman pertama
+            updatePage();
+            
+            // Juga bisa menggunakan keyboard untuk navigasi
+            document.addEventListener('keydown', function(e) {
+                if (letterContainer.style.display === 'block') {
+                    if (e.key === 'ArrowLeft' && currentPage > 1) {
+                        currentPage--;
+                        updatePage();
+                    } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+                        currentPage++;
+                        updatePage();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
